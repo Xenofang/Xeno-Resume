@@ -1,12 +1,26 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/userModel.js';
 
+// Generate JWT
+const generateToken = (id) => {
+    if (!process.env.JWT_SECRET) {
+        throw new Error('JWT_SECRET is not defined in environment variables');
+    }
+    return jwt.sign({ id }, process.env.JWT_SECRET, {
+        expiresIn: '30d',
+    });
+};
+
 // @desc    Register a new user
 // @route   POST /api/v1/auth/register
 // @access  Public
 export const registerUser = async (req, res, next) => {
     try {
         const { name, email, password } = req.body;
+
+        if (!name || !email || !password) {
+            return res.status(400).json({ message: 'Please provide all fields' });
+        }
 
         const userExists = await User.findOne({ email });
 
@@ -21,16 +35,18 @@ export const registerUser = async (req, res, next) => {
         });
 
         if (user) {
+            const token = generateToken(user._id);
             res.status(201).json({
                 _id: user._id,
                 name: user.name,
                 email: user.email,
-                token: generateToken(user._id),
+                token,
             });
         } else {
             res.status(400).json({ message: 'Invalid user data' });
         }
     } catch (error) {
+        console.error('Registration Error:', error);
         next(error);
     }
 };
@@ -57,11 +73,4 @@ export const loginUser = async (req, res, next) => {
     } catch (error) {
         next(error);
     }
-};
-
-// Generate JWT
-const generateToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET, {
-        expiresIn: '30d',
-    });
 };
