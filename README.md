@@ -1,4 +1,4 @@
-# 🌌 Antigravity: Xeno-Resume AI Builder
+# Xeno-Resume AI Builder with Antigravity 🌌
 
 Xeno-Resume is a cutting-edge, high-performance AI Resume Builder designed to help professionals create ATS-optimized resumes with a premium, "Antigravity" aesthetic. Built on the MERN stack and powered by Google Gemini AI, it offers real-time feedback, smart content enhancement, and seamless PDF exports.
 
