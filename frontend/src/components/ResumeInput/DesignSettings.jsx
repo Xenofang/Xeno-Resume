@@ -32,7 +32,7 @@ const DesignSettings = ({ template, setTemplate, accentColor, setAccentColor }) 
             <button 
               key={color}
               onClick={() => setAccentColor(color)}
-              className={`w-8 h-8 rounded-full border-2 transition-transform duration-200 ${accentColor === color ? 'border-white scale-125 shadow-md' : 'border-transparent hover:scale-110 shadow-sm'}`}
+              className={`w-10 h-10 rounded-full border-2 transition-transform duration-200 ${accentColor === color ? 'border-white scale-125 shadow-md' : 'border-transparent hover:scale-110 shadow-sm'}`}
               style={{ backgroundColor: color }}
             />
           ))}

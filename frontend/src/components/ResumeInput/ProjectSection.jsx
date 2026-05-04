@@ -15,7 +15,7 @@ const ProjectSection = ({ projects, handleArrayInputChange, addItem, removeItem 
               <BsX size={16} /> Remove
             </button>
             
-            <div className="grid grid-cols-2 gap-4 mb-4 pt-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 pt-4">
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">Project Name</label>
                 <input 
@@ -64,7 +64,7 @@ const ProjectSection = ({ projects, handleArrayInputChange, addItem, removeItem 
         
         <button 
           onClick={() => addItem('projects', { projectName: '', link: '', techStack: '', description: '' })}
-          className="w-full py-2 bg-[#1a1a1a] border-2 border-dashed border-white/10 rounded-lg text-gray-500 hover:border-white/20 hover:text-gray-400 transition font-medium"
+          className="w-full py-3 bg-[#1a1a1a] border-2 border-dashed border-white/10 rounded-lg text-gray-500 hover:border-white/20 hover:text-gray-400 transition font-medium min-h-[44px]"
         >
           + Add Project
         </button>

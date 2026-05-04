@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { BsCloudCheck, BsCollection, BsBoxArrowRight, BsSave, BsDownload } from 'react-icons/bs';
+import { BsCloudCheck, BsCollection, BsBoxArrowRight, BsSave, BsDownload, BsList, BsX } from 'react-icons/bs';
 import { toast } from 'react-hot-toast';
 import axios from 'axios';
 import { calculateATSScore } from '../utils/atsScore';
@@ -10,6 +10,7 @@ const Header = ({ accentColor, handlePrint, formData, template }) => {
   const { user, logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [isSaving, setIsSaving] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleSave = async () => {
     if (!isAuthenticated) {
@@ -54,15 +55,16 @@ const Header = ({ accentColor, handlePrint, formData, template }) => {
   };
 
   return (
-    <header className="h-16 bg-[#1a1a1a] border-b border-white/5 px-6 flex justify-between items-center shadow-md z-20 relative">
-      <Link to="/" className="text-xl font-bold tracking-tight text-white hover:opacity-80 transition-opacity">
+    <header className="h-16 bg-[#1a1a1a] border-b border-white/5 px-4 md:px-6 flex justify-between items-center shadow-md z-50 relative">
+      <Link to="/" className="text-xl font-bold tracking-tight text-white hover:opacity-80 transition-opacity flex-shrink-0">
         Xeno<span style={{ color: accentColor }}>Resume</span>
       </Link>
 
-      <div className="flex items-center gap-4">
+      {/* Desktop Navigation */}
+      <div className="hidden md:flex items-center gap-4">
         <Link 
           to="/dashboard" 
-          className={`hidden md:flex items-center gap-2 text-gray-400 hover:text-white transition-colors text-sm font-medium mr-4 ${!isAuthenticated ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}`}
+          className={`flex items-center gap-2 text-gray-400 hover:text-white transition-colors text-sm font-medium mr-4 ${!isAuthenticated ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}`}
         >
           <BsCollection /> My Resumes
         </Link>
@@ -105,6 +107,69 @@ const Header = ({ accentColor, handlePrint, formData, template }) => {
           </Link>
         )}
       </div>
+
+      {/* Mobile Menu Button */}
+      <div className="flex md:hidden items-center gap-3">
+        <button 
+          onClick={handlePrint}
+          style={{ backgroundColor: accentColor }}
+          className="w-10 h-10 flex items-center justify-center rounded-lg text-white shadow-lg active:scale-95"
+          title="Export PDF"
+        >
+          <BsDownload size={18} />
+        </button>
+        <button 
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          className="text-white p-2 text-2xl"
+        >
+          {isMenuOpen ? <BsX /> : <BsList />}
+        </button>
+      </div>
+
+      {/* Mobile Menu Drawer */}
+      {isMenuOpen && (
+        <div className="fixed inset-0 top-16 bg-[#1a1a1a] z-40 md:hidden flex flex-col p-6 animate-in slide-in-from-right duration-300">
+          <nav className="flex flex-col gap-6">
+            <Link 
+              to="/dashboard" 
+              onClick={() => setIsMenuOpen(false)}
+              className={`flex items-center gap-4 text-xl font-medium text-gray-300 hover:text-white transition-colors ${!isAuthenticated ? 'opacity-50' : ''}`}
+            >
+              <BsCollection style={{ color: accentColor }} /> My Resumes
+            </Link>
+            
+            <button 
+              onClick={() => { handleSave(); setIsMenuOpen(false); }}
+              disabled={isSaving}
+              className="flex items-center gap-4 text-xl font-medium text-gray-300 hover:text-white transition-colors text-left"
+            >
+              <BsSave style={{ color: accentColor }} /> Save Progress
+            </button>
+
+            {isAuthenticated ? (
+              <button 
+                onClick={() => { logout(); setIsMenuOpen(false); }}
+                className="flex items-center gap-4 text-xl font-medium text-red-400 hover:text-red-300 transition-colors text-left"
+              >
+                <BsBoxArrowRight /> Sign Out
+              </button>
+            ) : (
+              <Link 
+                to="/login"
+                onClick={() => setIsMenuOpen(false)}
+                className="text-xl font-medium text-gray-300 hover:text-white transition-colors"
+              >
+                Sign In
+              </Link>
+            )}
+          </nav>
+
+          <div className="mt-auto pt-10 border-t border-white/5">
+            <p className="text-gray-500 text-sm mb-4">Current Accent Color</p>
+            <div className="w-12 h-12 rounded-full border-2 border-white/20 shadow-xl" style={{ backgroundColor: accentColor }}></div>
+          </div>
+        </div>
+      )}
     </header>
   );
 };

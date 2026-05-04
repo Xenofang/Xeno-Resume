@@ -36,7 +36,7 @@ const ExperienceSection = ({
               />
             </div>
             
-            <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">Company</label>
                 <input 
@@ -74,7 +74,7 @@ const ExperienceSection = ({
         
         <button 
           onClick={() => addItem('experience', { jobTitle: '', company: '', dates: '', description: '' })}
-          className="w-full py-2 bg-[#1a1a1a] border-2 border-dashed border-white/10 rounded-lg text-gray-500 hover:border-white/20 hover:text-gray-400 transition font-medium"
+          className="w-full py-3 bg-[#1a1a1a] border-2 border-dashed border-white/10 rounded-lg text-gray-500 hover:border-white/20 hover:text-gray-400 transition font-medium min-h-[44px]"
         >
           + Add Experience
         </button>
@@ -93,7 +93,7 @@ const ExperienceSection = ({
         <button 
           onClick={handleEnhance}
           disabled={isEnhancing}
-          className="w-full py-3 rounded-lg font-bold text-sm tracking-wide transition-all shadow-lg flex items-center justify-center gap-2 border-2"
+          className="w-full py-3.5 rounded-lg font-bold text-sm tracking-wide transition-all shadow-lg flex items-center justify-center gap-2 border-2 min-h-[44px]"
           style={{ 
             borderColor: accentColor, 
             color: accentColor,

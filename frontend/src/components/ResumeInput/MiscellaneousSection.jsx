@@ -43,28 +43,30 @@ const MiscellaneousSection = ({
           <div key={idx} className="p-5 bg-[#262626] border border-white/10 rounded-xl relative shadow-2xl transition-all hover:border-white/20 group">
             <button 
               onClick={() => removeCustomItem(sectionKey, idx)}
-              className="absolute top-3 right-3 text-gray-500 hover:text-red-400 transition-colors flex items-center gap-1 text-xs border border-white/10 px-2 py-1 rounded-md bg-[#1a1a1a] opacity-0 group-hover:opacity-100"
+              className="absolute top-3 right-3 text-gray-500 hover:text-red-400 transition-colors flex items-center gap-1 text-xs border border-white/10 px-2 py-1 rounded-md bg-[#1a1a1a] opacity-100 md:opacity-0 md:group-hover:opacity-100 min-h-[32px]"
             >
               <BsX size={16} /> Remove
             </button>
 
             {type === 'links' && (
-              <div className="flex flex-wrap gap-3 items-center pt-2">
-                <div className="flex items-center gap-2 bg-[#1a1a1a] border border-white/10 rounded-full px-4 py-2 group-hover:border-white/30 transition-all">
-                  <BsLink45Deg className="text-gray-500" />
-                  <input 
-                    type="text" 
-                    value={item.platform}
-                    onChange={(e) => handleCustomSectionChange(sectionKey, idx, 'platform', e.target.value)}
-                    className="bg-transparent border-none text-white text-xs font-bold outline-none w-24 placeholder:text-gray-700"
-                    placeholder="Platform"
-                  />
-                  <span className="text-gray-800 text-xs">|</span>
+              <div className="flex flex-col sm:flex-row flex-wrap gap-3 items-start sm:items-center pt-2">
+                <div className="w-full sm:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-2 bg-[#1a1a1a] border border-white/10 rounded-xl sm:rounded-full px-4 py-3 sm:py-2 group-hover:border-white/30 transition-all">
+                  <div className="flex items-center gap-2">
+                    <BsLink45Deg className="text-gray-500" />
+                    <input 
+                      type="text" 
+                      value={item.platform}
+                      onChange={(e) => handleCustomSectionChange(sectionKey, idx, 'platform', e.target.value)}
+                      className="bg-transparent border-none text-white text-xs font-bold outline-none w-24 placeholder:text-gray-700"
+                      placeholder="Platform"
+                    />
+                  </div>
+                  <span className="hidden sm:inline text-gray-800 text-xs">|</span>
                   <input 
                     type="text" 
                     value={item.url}
                     onChange={(e) => handleCustomSectionChange(sectionKey, idx, 'url', e.target.value)}
-                    className="bg-transparent border-none text-white text-xs outline-none w-48 placeholder:text-gray-700"
+                    className="bg-transparent border-none text-white text-xs outline-none w-full sm:w-48 placeholder:text-gray-700 mt-2 sm:mt-0"
                     placeholder="URL (e.g. linkedin.com/in/...)"
                   />
                 </div>

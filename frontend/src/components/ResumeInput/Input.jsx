@@ -6,6 +6,7 @@ import ProjectSection from './ProjectSection';
 import SkillsSection from './SkillsSection';
 import MiscellaneousSection from './MiscellaneousSection';
 import { BsPlusCircle, BsLink45Deg, BsAward, BsPatchCheck } from 'react-icons/bs';
+import { calculateATSScore, getScoreColor } from '../../utils/atsScore';
 
 const Input = ({ 
   formData, 
@@ -30,6 +31,7 @@ const Input = ({
   isEnhancingSummary
 }) => {
   const [showMenu, setShowMenu] = React.useState(false);
+  const atsScore = calculateATSScore(formData);
 
   const toggleSection = (section, emptyState) => {
     // Only add if not already present or if multiple are allowed (here we just add an item)
@@ -37,13 +39,25 @@ const Input = ({
     setShowMenu(false);
   };
   return (
-    <div className="w-full md:w-[55%] h-full overflow-y-auto p-6 md:p-10 bg-[#1a1a1a] text-gray-300 custom-scrollbar z-10 relative shadow-[10px_0_30px_rgba(0,0,0,0.5)]">
-      <DesignSettings 
-        template={template}
-        setTemplate={setTemplate}
-        accentColor={accentColor}
-        setAccentColor={setAccentColor}
-      />
+    <div className="w-full h-full overflow-y-auto bg-[#1a1a1a] text-gray-300 custom-scrollbar z-10 relative shadow-[10px_0_30px_rgba(0,0,0,0.5)]">
+      {/* Mobile Sticky ATS Score */}
+      <div className="md:hidden sticky top-0 z-50 bg-[#1a1a1a]/80 backdrop-blur-md border-b border-white/5 px-6 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${getScoreColor(atsScore)}`}>
+            {atsScore}%
+          </div>
+          <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">ATS Score</span>
+        </div>
+        <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: accentColor }}></div>
+      </div>
+
+      <div className="p-6 md:p-10">
+        <DesignSettings 
+          template={template}
+          setTemplate={setTemplate}
+          accentColor={accentColor}
+          setAccentColor={setAccentColor}
+        />
 
       <PersonalDetails 
         formData={formData}
@@ -154,7 +168,8 @@ const Input = ({
         )}
       </div>
     </div>
-  );
+  </div>
+);
 };
 
 export default Input;
