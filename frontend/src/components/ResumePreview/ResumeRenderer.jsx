@@ -135,6 +135,38 @@ const ResumeRenderer = forwardRef(({ formData, template, accentColor }, ref) => 
           </div>
         )}
 
+        {/* Education */}
+        {formData.education && formData.education.length > 0 && (
+          <div className="mb-8">
+            <h3 
+              className={`text-lg font-bold mb-4 transition-all duration-300 ${isPro ? 'uppercase tracking-widest border-b pb-1 mb-5' : ''}`}
+              style={{ 
+                color: accentColor,
+                borderBottomColor: isPro ? accentColor : 'transparent'
+              }}
+            >
+              Education
+            </h3>
+            <div className="space-y-4">
+              {formData.education.map((edu, idx) => (
+                <div key={idx}>
+                  <div className="flex justify-between items-baseline mb-1">
+                    <h4 className="text-md font-bold">{edu.school || 'School / University'}</h4>
+                    <span className="text-sm text-gray-500">{edu.dates || 'Dates'}</span>
+                  </div>
+                  <div className="flex justify-between items-baseline mb-1">
+                    <p className="text-sm font-medium transition-all duration-300" style={{ color: accentColor }}>{edu.degree || 'Degree'}</p>
+                    {edu.location && <span className="text-xs text-gray-400 italic">{edu.location}</span>}
+                  </div>
+                  {edu.description && (
+                    <p className="text-sm text-gray-700 leading-relaxed">{edu.description}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Projects */}
         {formData.projects.length > 0 && (
           <div className="mb-8">

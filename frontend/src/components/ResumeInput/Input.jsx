@@ -2,6 +2,7 @@ import React from 'react';
 import DesignSettings from './DesignSettings';
 import PersonalDetails from './PersonalDetails';
 import ExperienceSection from './ExperienceSection';
+import EducationSection from './EducationSection';
 import ProjectSection from './ProjectSection';
 import SkillsSection from './SkillsSection';
 import MiscellaneousSection from './MiscellaneousSection';
@@ -77,6 +78,13 @@ const Input = ({
         handleEnhance={handleEnhanceExperience}
         isEnhancing={isEnhancing}
         accentColor={accentColor}
+      />
+
+      <EducationSection 
+        education={formData.education}
+        handleArrayInputChange={handleArrayInputChange}
+        addItem={addItem}
+        removeItem={removeItem}
       />
 
       <ProjectSection 

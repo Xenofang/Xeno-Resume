@@ -9,6 +9,9 @@ export const DEFAULT_FORM_DATA = {
   projects: [
     { projectName: '', link: '', techStack: '', description: '' }
   ],
+  education: [
+    { school: '', degree: '', location: '', dates: '', description: '' }
+  ],
   skills: [
     { category: '', items: [] }
   ],

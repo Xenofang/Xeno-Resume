@@ -1,32 +1,36 @@
 export const calculateATSScore = (formData) => {
   let score = 0;
   
-  // 1. Contact Info (20%)
-  if (formData.name) score += 10;
-  if (formData.email && formData.phone) score += 10;
+  // 1. Contact Info (15%)
+  if (formData.name) score += 7;
+  if (formData.email && formData.phone) score += 8;
   
   // 2. Professional Summary (10%)
   if (formData.summary && formData.summary.length > 50) score += 10;
   
-  // 3. Experience (30%)
+  // 3. Experience (25%)
   const validExp = formData.experience.filter(e => e.jobTitle && e.company);
-  score += Math.min(validExp.length * 15, 30);
+  score += Math.min(validExp.length * 15, 25);
   
   // 4. Experience Bullets (10%)
-  const totalBullets = formData.experience.reduce((acc, exp) => acc + (exp.description.split('\n').filter(l => l.trim()).length), 0);
+  const totalBullets = formData.experience.reduce((acc, exp) => acc + (exp.description?.split('\n').filter(l => l.trim()).length || 0), 0);
   if (totalBullets >= 2) score += 10;
 
-  // 5. Projects (20%)
-  const validProj = formData.projects.filter(p => p.projectName && p.description);
-  score += Math.min(validProj.length * 10, 20);
+  // 5. Education (15%)
+  const validEdu = formData.education?.filter(e => e.school && e.degree) || [];
+  score += Math.min(validEdu.length * 15, 15);
 
-  // 6. Skills Density (10%)
+  // 6. Projects (15%)
+  const validProj = formData.projects.filter(p => p.projectName && p.description);
+  score += Math.min(validProj.length * 10, 15);
+
+  // 7. Skills Density (10%)
   const totalSkills = formData.skills.reduce((acc, group) => acc + group.items.length, 0);
   if (totalSkills >= 3) score += 10;
   
-  // 7. Custom Sections Bonus (up to 10%)
-  if (formData.customSections?.links?.length > 0) score += 5;
-  if (formData.customSections?.certifications?.length > 0) score += 5;
+  // 8. Custom Sections Bonus (up to 5%)
+  if (formData.customSections?.links?.length > 0) score += 3;
+  if (formData.customSections?.certifications?.length > 0) score += 2;
 
   return Math.min(score, 100);
 };
