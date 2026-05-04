@@ -1,21 +1,31 @@
 import mongoose from 'mongoose';
 
 const experienceSchema = new mongoose.Schema({
-    company: { type: String, required: true },
-    position: { type: String, required: true },
-    startDate: { type: Date, required: true },
-    endDate: { type: Date },
-    current: { type: Boolean, default: false },
+    jobTitle: { type: String },
+    company: { type: String },
+    dates: { type: String },
     description: { type: String },
-    achievements: [{ type: String }], // AI enhanced bullets
+    achievements: [{ type: String }],
 });
 
 const educationSchema = new mongoose.Schema({
-    institution: { type: String, required: true },
-    degree: { type: String, required: true },
-    fieldOfStudy: { type: String },
-    startDate: { type: Date },
-    endDate: { type: Date },
+    school: { type: String },
+    degree: { type: String },
+    location: { type: String },
+    dates: { type: String },
+    description: { type: String },
+});
+
+const projectSchema = new mongoose.Schema({
+    projectName: { type: String },
+    link: { type: String },
+    techStack: { type: String },
+    description: { type: String },
+});
+
+const skillSchema = new mongoose.Schema({
+    category: { type: String },
+    items: [{ type: String }],
 });
 
 const resumeSchema = new mongoose.Schema(
@@ -30,23 +40,30 @@ const resumeSchema = new mongoose.Schema(
             required: [true, 'Resume title is required'],
             default: 'Untitled Resume',
         },
-        personalInfo: {
-            firstName: { type: String, required: true },
-            lastName: { type: String, required: true },
-            email: { type: String, required: true },
+        // Flattening to match frontend formData
+        formData: {
+            name: { type: String },
+            email: { type: String },
             phone: { type: String },
-            location: { type: String },
-            website: { type: String },
-            linkedIn: { type: String },
-            github: { type: String },
+            summary: { type: String },
+            experience: [experienceSchema],
+            education: [educationSchema],
+            projects: [projectSchema],
+            skills: [skillSchema],
+            customSections: {
+                links: [{ label: String, url: String }],
+                awards: [{ title: String, date: String, issuer: String }],
+                certifications: [{ title: String, date: String, issuer: String }],
+            },
         },
-        summary: {
-            type: String, // AI can enhance this
+        settings: {
+            template: { type: String, default: 'modern' },
+            accentColor: { type: String, default: '#3B82F6' },
         },
-        experience: [experienceSchema],
-        education: [educationSchema],
-        skills: [{ type: String }],
-        // Additional sections can be added (projects, certifications)
+        atsScore: {
+            type: Number,
+            default: 0,
+        },
     },
     {
         timestamps: true,
