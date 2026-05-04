@@ -4,48 +4,35 @@ import cors from 'cors';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 // Load environment variables
 dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 
 // ==========================================
 // Security & Utility Middlewares
 // ==========================================
-// Set security HTTP headers
-app.use(helmet());
-
-// Enable CORS (Allow frontend origin)
-app.use(cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173', // Vite default port
-    credentials: true, // Allow cookies to be sent
+app.use(helmet({
+    contentSecurityPolicy: false, // Required for some React production builds
 }));
 
-// Parse incoming JSON payloads
+app.use(cors({
+    origin: true, // Allow all in production for now, or use process.env.FRONTEND_URL
+    credentials: true,
+}));
+
 app.use(express.json());
-
-// Parse incoming URL-encoded payloads
 app.use(express.urlencoded({ extended: true }));
-
-// Parse cookies
 app.use(cookieParser());
 
 // ==========================================
-// Database Connection
-// ==========================================
-const connectDB = async () => {
-    try {
-        const conn = await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/resume-builder');
-        console.log(`MongoDB Connected: ${conn.connection.host}`);
-    } catch (error) {
-        console.error(`Error connecting to MongoDB: ${error.message}`);
-        process.exit(1);
-    }
-};
-
-// ==========================================
-// Routes (Placeholders for MVC)
+// Routes
 // ==========================================
 import authRoutes from './routes/authRoutes.js';
 import resumeRoutes from './routes/resumeRoutes.js';
@@ -55,27 +42,27 @@ app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/resume', resumeRoutes);
 app.use('/api/v1/chat', chatRoutes);
 
-// Basic health check route
+// Health check
 app.get('/api/v1/health', (req, res) => {
     res.status(200).json({ status: 'success', message: 'API is running perfectly.' });
 });
 
-// ==========================================
-// Global Error Handler Middleware
-// ==========================================
-app.use((err, req, res, next) => {
-    // If error has a status (like from axios or gemini sdk), use it
-    let statusCode = err.status || err.statusCode || (res.statusCode === 200 ? 500 : res.statusCode);
-    
-    // Specifically handle Google API errors which often come back as 429
-    if (err.message && err.message.includes('429')) {
-        statusCode = 429;
-    }
+// Serve Static Files
+const publicPath = path.join(__dirname, 'public');
+app.use(express.static(publicPath));
 
+// Handle React Routing
+app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api')) return next();
+    res.sendFile(path.join(publicPath, 'index.html'));
+});
+
+// Global Error Handler
+app.use((err, req, res, next) => {
+    let statusCode = err.status || err.statusCode || (res.statusCode === 200 ? 500 : res.statusCode);
     res.status(statusCode).json({
         success: false,
         message: err.message,
-        error: process.env.NODE_ENV === 'production' ? {} : err,
         stack: process.env.NODE_ENV === 'production' ? '🥞' : err.stack,
     });
 });
@@ -83,10 +70,24 @@ app.use((err, req, res, next) => {
 // ==========================================
 // Server Initialization
 // ==========================================
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8080; // Cloud Run default
 
-connectDB().then(() => {
-    app.listen(PORT, () => {
-        console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
-    });
-});
+const startServer = async () => {
+    try {
+        // Connect to DB (Optional: don't await here if you want instant start)
+        await mongoose.connect(process.env.MONGO_URI);
+        console.log('MongoDB Connected...');
+        
+        app.listen(PORT, '0.0.0.0', () => {
+            console.log(`Server running on port ${PORT}`);
+        });
+    } catch (error) {
+        console.error('Startup Error:', error.message);
+        // Start server anyway so Cloud Run doesn't kill it, allowing you to debug
+        app.listen(PORT, '0.0.0.0', () => {
+            console.log(`Server running in FAILSAFE mode on port ${PORT}`);
+        });
+    }
+};
+
+startServer();
