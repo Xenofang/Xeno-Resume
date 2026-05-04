@@ -47,13 +47,13 @@ const connectDB = async () => {
 // ==========================================
 // Routes (Placeholders for MVC)
 // ==========================================
-// import authRoutes from './routes/authRoutes.js';
+import authRoutes from './routes/authRoutes.js';
 import resumeRoutes from './routes/resumeRoutes.js';
-// import chatRoutes from './routes/chatRoutes.js';
+import chatRoutes from './routes/chatRoutes.js';
 
-// app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/resume', resumeRoutes);
-// app.use('/api/v1/chat', chatRoutes);
+app.use('/api/v1/chat', chatRoutes);
 
 // Basic health check route
 app.get('/api/v1/health', (req, res) => {
@@ -64,9 +64,18 @@ app.get('/api/v1/health', (req, res) => {
 // Global Error Handler Middleware
 // ==========================================
 app.use((err, req, res, next) => {
-    const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
+    // If error has a status (like from axios or gemini sdk), use it
+    let statusCode = err.status || err.statusCode || (res.statusCode === 200 ? 500 : res.statusCode);
+    
+    // Specifically handle Google API errors which often come back as 429
+    if (err.message && err.message.includes('429')) {
+        statusCode = 429;
+    }
+
     res.status(statusCode).json({
+        success: false,
         message: err.message,
+        error: process.env.NODE_ENV === 'production' ? {} : err,
         stack: process.env.NODE_ENV === 'production' ? '🥞' : err.stack,
     });
 });
