@@ -12,7 +12,7 @@ const Chatbot = ({
   accentColor 
 }) => {
   return (
-    <div className="fixed bottom-8 right-8 z-50 flex flex-col items-end">
+    <div className="fixed bottom-24 right-6 md:bottom-8 md:right-8 z-50 flex flex-col items-end">
       {isChatOpen && (
         <div className="mb-4 w-80 bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden flex flex-col transform origin-bottom-right transition-all duration-300">
           <div style={{ backgroundColor: accentColor }} className="text-white p-4 flex justify-between items-center">
